@@ -3,12 +3,13 @@ version: "3.1"
 services:
   frontend:
     build:
-      dockerfile: ./Dockerfile
-    expose:
-      - 3005:3000
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3000"
     networks:
-      - system-recomendation
+      - system-recommendation
 
 networks:
-  system-recomendation:
-    - driver: bridge
+  system-recommendation:
+    driver: bridge
