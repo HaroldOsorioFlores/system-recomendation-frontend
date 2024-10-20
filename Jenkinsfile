@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     // Ejecutar el contenedor con Podman Compose
-                    sh "podman-compose up -d"
+                    sh "docker-compose up -d"
                 }
             }
         }
