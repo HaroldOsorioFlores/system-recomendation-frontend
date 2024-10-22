@@ -25,7 +25,7 @@ export default function AuthInterface() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-green-200 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">

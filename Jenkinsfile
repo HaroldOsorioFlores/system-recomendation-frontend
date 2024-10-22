@@ -5,7 +5,6 @@ pipeline {
         stage('Build and Run Docker Image') {
             steps {
                 script {
-                    // Ejecutar el contenedor con Podman Compose
                     sh "docker-compose up -d"
                 }
             }

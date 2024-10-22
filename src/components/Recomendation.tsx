@@ -91,7 +91,7 @@ export default function Recomendation() {
           ) : (
             <p className="text-sm text-muted-foreground italic bg-muted/50 p-4 rounded-md">
               Completa el formulario y haz clic en `{"Obtener Recomendación"}`
-              para recibir tu plan personalizado.
+              para recibir los productos adecuados para ti.
             </p>
           )}
         </div>
