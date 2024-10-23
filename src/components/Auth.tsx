@@ -13,15 +13,50 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  loginUserSchema,
+  registerSchema,
+  RegisterUserType,
+  LoginUserType,
+} from "@/lib/validation";
+import { IFormErrors } from "@/lib/definitions";
+import { useLogin } from "@/hooks/useLogin";
 
 export default function AuthInterface() {
   const [isLogin, setIsLogin] = useState(true);
+
+  const { mutate } = useLogin();
+
   const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<LoginUserType | RegisterUserType>({
+    resolver: zodResolver(isLogin ? loginUserSchema : registerSchema),
+    defaultValues: isLogin
+      ? { email: "", password: "" }
+      : { name: "", email: "", password: "", confirmPassword: "" },
+  });
+
+  const errorsForm = errors as IFormErrors;
+
+  const onFormSubmit: SubmitHandler<LoginUserType | RegisterUserType> = (
+    data
+  ) => {
+    console.log({ data });
+    mutate(data);
+
+    reset();
+    router.push("/recomendacion");
+  };
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
-    // router.push("/recomendation");
-    // console.log("recomendation");
+    reset();
   };
 
   return (
@@ -38,62 +73,65 @@ export default function AuthInterface() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLogin ? (
-            <form className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@ejemplo.com"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
-                <Input id="password" type="password" required />
-              </div>
-              <Button
-                type="submit"
-                className="w-full"
-                onClick={() => router.push("/recomendacion")}
-              >
-                Iniciar Sesión
-              </Button>
-            </form>
-          ) : (
-            <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit(onFormSubmit)}>
+            {!isLogin && (
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre Completo</Label>
                 <Input
                   id="name"
                   type="text"
                   placeholder="Juan Pérez"
-                  required
+                  {...register("name")}
                 />
+                {errorsForm.name && (
+                  <p className="text-red-500 text-sm">
+                    {errorsForm.name.message}
+                  </p>
+                )}
               </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo Electrónico</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="tu@ejemplo.com"
+                {...register("email")}
+              />
+              {errorsForm.email && (
+                <p className="text-red-500 text-sm">
+                  {errorsForm.email.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Contraseña</Label>
+              <Input id="password" type="password" {...register("password")} />
+              {errorsForm.password && (
+                <p className="text-red-500 text-sm">
+                  {errorsForm.password.message}
+                </p>
+              )}
+            </div>
+            {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
+                <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@ejemplo.com"
-                  required
+                  id="confirmPassword"
+                  type="password"
+                  {...register("confirmPassword")}
                 />
+                {errorsForm.confirmPassword && (
+                  <p className="text-red-500 text-sm">
+                    {errorsForm.confirmPassword.message}
+                  </p>
+                )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
-                <Input id="password" type="password" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
-                <Input id="confirm-password" type="password" required />
-              </div>
-              <Button type="submit" className="w-full">
-                Crear Cuenta
-              </Button>
-            </form>
-          )}
+            )}
+            <Button type="submit" className="w-full">
+              {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
+            </Button>
+          </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-600">

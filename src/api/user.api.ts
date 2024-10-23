@@ -1,11 +1,6 @@
-import {
-  IUser,
-  IUserLogin,
-  IUserRegister,
-  ResponseDto,
-  ResponseLogin,
-} from "@/definitions/user.definition";
+import { IUser, IUserRegister, ResponseLogin } from "@/lib/definitions";
 import { urlLoginUser, urlRegisterUser } from "./endpoints";
+import { LoginUserType } from "@/lib/validation";
 
 export async function registerUser(
   data: IUser
@@ -30,15 +25,16 @@ export async function registerUser(
 }
 
 export async function loginUser(
-  data: IUserLogin
-): Promise<ResponseDto<ResponseLogin> | Error> {
+  data: LoginUserType
+): Promise<ResponseLogin | Error> {
   try {
-    const formBody = new URLSearchParams(
-      Object.entries(data).reduce((acc, [key, value]) => {
-        acc[key] = String(value);
-        return acc;
-      }, {} as Record<string, string>)
-    ).toString();
+    console.log({ dataApi: data });
+    const formBody = new URLSearchParams({
+      username: data.email, // Envía 'username' como parte del cuerpo de la solicitud
+      password: data.password, // Envía 'password' también
+    }).toString();
+
+    console.log({ formBody });
 
     const res = await fetch(urlLoginUser, {
       cache: "no-cache",
@@ -48,12 +44,16 @@ export async function loginUser(
       },
       body: formBody,
     });
-
+    console.log({ res });
     if (!res.ok) {
-      throw new Error("HTTP error " + res.status);
+      const errorDetails = await res.json();
+      console.log("Error details from server:", errorDetails);
+      throw new Error("HTTP error " + res.status + ": " + errorDetails.message);
     }
 
-    const result: ResponseDto<ResponseLogin> = await res.json();
+    const result: ResponseLogin = await res.json();
+
+    console.log({ result });
 
     return result;
   } catch (error) {

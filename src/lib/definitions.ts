@@ -20,3 +20,17 @@ export interface ResponseLogin {
   access_token: string;
   token_type: string;
 }
+
+export interface IFieldError {
+  message: string;
+  ref?: React.RefObject<HTMLInputElement>;
+  type: string;
+}
+
+export interface IFormErrors {
+  username?: IFieldError;
+  password?: IFieldError;
+  email?: IFieldError;
+  name?: IFieldError;
+  confirmPassword?: IFieldError;
+}

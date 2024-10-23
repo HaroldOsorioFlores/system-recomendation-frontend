@@ -8,8 +8,8 @@ services:
     ports:
       - "3005:3000"
     networks:
-      - system-recommendation
+      - recfoodcato-networks
 
 networks:
-  system-recommendation:
+  recfoodcato-networks:
     driver: bridge
