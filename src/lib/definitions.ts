@@ -8,18 +8,20 @@ export interface IUser {
 
 export type IUserLogin = Pick<IUser, "correo" | "contrasenia">;
 
-export type IUserRegister = Omit<IUser, "id">;
-
 export interface ResponseDto<T> {
   status_code: number;
   detail: string;
   data: T;
 }
 
+export type IUserResponse = Pick<IUser, "correo" | "nombres">;
+
 export interface ResponseLogin {
   access_token: string;
   token_type: string;
 }
+
+export type token = Pick<ResponseLogin, "access_token">;
 
 export interface IFieldError {
   message: string;

@@ -1,10 +1,8 @@
-import { IUser, IUserRegister, ResponseLogin } from "@/lib/definitions";
+import { IUser, ResponseLogin } from "@/lib/definitions";
 import { urlLoginUser, urlRegisterUser } from "./endpoints";
 import { LoginUserType } from "@/lib/validation";
 
-export async function registerUser(
-  data: IUser
-): Promise<IUserRegister | Error> {
+export async function registerUser(data: IUser): Promise<any | Error> {
   try {
     const res = await fetch(urlRegisterUser, {
       cache: "no-cache",
@@ -30,8 +28,8 @@ export async function loginUser(
   try {
     console.log({ dataApi: data });
     const formBody = new URLSearchParams({
-      username: data.email, // Envía 'username' como parte del cuerpo de la solicitud
-      password: data.password, // Envía 'password' también
+      username: data.email,
+      password: data.password,
     }).toString();
 
     console.log({ formBody });

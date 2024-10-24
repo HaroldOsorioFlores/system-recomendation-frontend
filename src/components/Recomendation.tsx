@@ -13,15 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuthStore } from "@/store/auth.store";
+import useAuthStore from "@/store/auth.store";
 
 export default function Recomendation() {
   const [isLoading, setIsLoading] = useState(false);
   const [recommendation, setRecommendation] = useState("");
-  const accessToken = useAuthStore((state) => state.accessToken);
-
-  console.log({ recomendation: accessToken });
-
+  const { email } = useAuthStore();
+  console.log({ recomendationUser: email });
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);

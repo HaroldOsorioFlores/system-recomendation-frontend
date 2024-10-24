@@ -4,7 +4,6 @@ import * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Menu,
   Home,
@@ -15,6 +14,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import useAuthStore from "@/store/auth.store";
+import { isTokenExpired } from "@/lib/utils";
 
 const pages = [
   { name: "Inicio", icon: Home, path: "/recomendacion" },
@@ -31,6 +32,24 @@ export default function SidebarLayout({
 }) {
   const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
+  const { email, logout, token, exp } = useAuthStore();
+
+  React.useEffect(() => {
+    console.log({ token });
+    if (token) {
+      if (exp !== null && isTokenExpired(exp)) {
+        logout();
+        router.push("/");
+      }
+    }
+
+    // if (!token) router.push("/");
+  }, [token, exp, logout, router]);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -73,7 +92,7 @@ export default function SidebarLayout({
             </div>
             <Button
               variant="ghost"
-              onClick={() => router.push("/")}
+              onClick={handleLogout}
               className={`w-full justify-start ${
                 isOpen ? "" : "justify-center"
               }`}
@@ -88,7 +107,7 @@ export default function SidebarLayout({
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header de usuario */}
-        <header className="border-b p-4 flex justify-between items-center bg-background">
+        <header className="border-b p-4 flex justify-between items-center bg-background h-[73px]">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -112,7 +131,7 @@ export default function SidebarLayout({
                     ))}
                     <Button
                       variant="ghost"
-                      onClick={() => router.push("/")}
+                      onClick={handleLogout}
                       className={`w-full justify-start ${
                         isOpen ? "" : "justify-center"
                       }`}
@@ -127,11 +146,11 @@ export default function SidebarLayout({
           </Sheet>
           <div className="w-full flex justify-end">
             <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium">John Doe</span>
-              <Avatar>
+              <span className="text-sm font-medium">{email}</span>
+              {/* <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
+              </Avatar> */}
             </div>
           </div>
         </header>
