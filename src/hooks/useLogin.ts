@@ -1,5 +1,5 @@
-import { loginUser } from "@/api/user.api";
-import { LoginUserType } from "@/lib/validation";
+import { loginUser, registerUser } from "@/api/user.api";
+import { LoginUserType, RegisterUserType } from "@/lib/validation";
 import useAuthStore from "@/store/auth.store";
 import { useMutation } from "@tanstack/react-query";
 
@@ -12,10 +12,29 @@ export const useLogin = () => {
       if (data instanceof Error) throw console.error(data.message);
       console.log({ uselogin: data.access_token });
       login(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
-      // localStorage.set('accessToken', data.token);
-      // setAuthorizationHeader(data.token);
-      // queryClient.removeQueries();
+  return { mutate, isPending };
+};
+
+export const useRegister = () => {
+  const loginHook = useLogin();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: RegisterUserType) => registerUser(data),
+    onSuccess: (data, variables) => {
+      if (data instanceof Error) throw console.error(data.message);
+      console.log({ useregister: data });
+
+      const loginUser: LoginUserType = {
+        email: variables.email,
+        password: variables.password,
+      };
+      loginHook.mutate(loginUser);
     },
     onError: (error) => {
       console.log(error);

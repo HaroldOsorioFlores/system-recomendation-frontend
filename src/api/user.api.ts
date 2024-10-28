@@ -1,21 +1,30 @@
-import { IUser, ResponseLogin } from "@/lib/definitions";
+import { IResponseRegister, IUser, ResponseLogin } from "@/lib/definitions";
 import { urlLoginUser, urlRegisterUser } from "./endpoints";
-import { LoginUserType } from "@/lib/validation";
+import { LoginUserType, RegisterUserType } from "@/lib/validation";
 
-export async function registerUser(data: IUser): Promise<any | Error> {
+export async function registerUser(
+  data: RegisterUserType
+): Promise<IResponseRegister | Error> {
   try {
+    const dataMaped: IUser = {
+      nombres: data.name,
+      apellidos: data.lastName,
+      correo: data.email,
+      contrasenia: data.password
+    }
     const res = await fetch(urlRegisterUser, {
       cache: "no-cache",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(dataMaped),
     });
     if (!res.ok) {
       throw new Error("HTTP error " + res.status);
     }
-    return await res.json();
+    const result: IResponseRegister = await res.json();
+    return result;
   } catch (error) {
     if (error instanceof Error) throw new Error(error.message);
     throw new Error(error as string);

@@ -22,12 +22,13 @@ import {
   LoginUserType,
 } from "@/lib/validation";
 import { IFormErrors } from "@/lib/definitions";
-import { useLogin } from "@/hooks/useLogin";
+import { useLogin, useRegister } from "@/hooks/useLogin";
 
 export default function AuthInterface() {
   const [isLogin, setIsLogin] = useState(true);
 
-  const { mutate } = useLogin();
+  const loginHook = useLogin();
+  const registerHook = useRegister();
 
   const router = useRouter();
   const {
@@ -39,7 +40,13 @@ export default function AuthInterface() {
     resolver: zodResolver(isLogin ? loginUserSchema : registerSchema),
     defaultValues: isLogin
       ? { email: "", password: "" }
-      : { name: "", email: "", password: "", confirmPassword: "" },
+      : {
+          name: "",
+          lastName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        },
   });
 
   const errorsForm = errors as IFormErrors;
@@ -48,7 +55,11 @@ export default function AuthInterface() {
     data
   ) => {
     console.log({ data });
-    mutate(data);
+    if (isLogin) {
+      loginHook.mutate(data as LoginUserType);
+    } else {
+      registerHook.mutate(data as RegisterUserType);
+    }
 
     reset();
     router.push("/recomendacion");
@@ -75,20 +86,36 @@ export default function AuthInterface() {
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit(onFormSubmit)}>
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Nombre Completo</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Juan Pérez"
-                  {...register("name")}
-                />
-                {errorsForm.name && (
-                  <p className="text-red-500 text-sm">
-                    {errorsForm.name.message}
-                  </p>
-                )}
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nombre Completo</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Juan"
+                    {...register("name")}
+                  />
+                  {errorsForm.name && (
+                    <p className="text-red-500 text-sm">
+                      {errorsForm.name.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Apellido Completo</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Perez"
+                    {...register("lastName")}
+                  />
+                  {errorsForm.name && (
+                    <p className="text-red-500 text-sm">
+                      {errorsForm.lastName?.message}
+                    </p>
+                  )}
+                </div>
+              </>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Correo Electrónico</Label>
