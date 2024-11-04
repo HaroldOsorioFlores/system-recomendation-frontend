@@ -23,6 +23,8 @@ import {
 } from "@/lib/validation";
 import { IFormErrors } from "@/lib/definitions";
 import { useLogin, useRegister } from "@/hooks/useLogin";
+import Image from "next/image";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 
 export default function AuthInterface() {
   const [isLogin, setIsLogin] = useState(true);
@@ -74,6 +76,21 @@ export default function AuthInterface() {
     <div className="flex items-center justify-center min-h-screen bg-green-200 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
+          <CardTitle className="text-3xl font-bold text-center">
+            ReecFoodCato
+          </CardTitle>
+          <div className="w-[100px] h-[100px] mx-auto">
+            <AspectRatio ratio={16 / 9}>
+              <Image
+                alt="Logo universidad Catolica de Santa Maria"
+                src="/logoUcsm.png"
+                width={100}
+                height={100}
+                className=" mb-4"
+                priority
+              />
+            </AspectRatio>
+          </div>
           <CardTitle className="text-2xl font-bold text-center">
             {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
           </CardTitle>
@@ -122,7 +139,7 @@ export default function AuthInterface() {
               <Input
                 id="email"
                 type="email"
-                placeholder="tu@ejemplo.com"
+                placeholder="jperez@gmail.com"
                 {...register("email")}
               />
               {errorsForm.email && (

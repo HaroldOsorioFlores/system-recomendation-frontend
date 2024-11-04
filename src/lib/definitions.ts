@@ -39,14 +39,6 @@ export interface IFormErrors {
   confirmPassword?: IFieldError;
 }
 
-// recomendaciones DEFINCIONES
-// {
-//   "peso": 0,
-//   "altura": 0,
-//   "edad": 0,
-//   "genero": 0,
-//   "nivel_actividad": 0
-// }
 export interface IRecomendationsRequest {
   peso: number;
   altura: number;
@@ -76,4 +68,25 @@ export interface IFormErrorsRecomendation {
   edad?: IFieldError;
   genero?: IFieldError;
   nivel_actividad?: IFieldError;
+}
+
+export interface IPaginatedResponse<T> {
+  items: T;
+  total: number;
+  page: number;
+  size: number;
+  pages: number;
+}
+
+export interface IHistoryRecomendationResponse {
+  id: number;
+  usuario_id: number;
+  peso: number;
+  talla: number;
+  edad: number;
+  genero: number;
+  act_fisica: number;
+  imc: number;
+  f_recomendacion: string;
+  productos: IProduct[][];
 }

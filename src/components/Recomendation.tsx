@@ -21,13 +21,14 @@ import {
   RecomendationsRequestSchema,
 } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { RecomendationAccordion } from "./RecomendationAccordion";
+import { useToggleRecomendation } from "@/hooks/useToggleRecomendation";
 
 export default function Recomendation() {
-  // const [recommendation, setRecommendation] =
-  //   useState<ResponseDto<IRecomendacion> | null>(null);
   const { token } = useAuthStore();
   const { data, isPending, mutate } = useRecomendation();
-  console.log({ data });
+  const { toggleAllAccordions, openAccordions, setOpenAccordions } =
+    useToggleRecomendation();
   const {
     handleSubmit,
     formState: { errors },
@@ -35,10 +36,10 @@ export default function Recomendation() {
   } = useForm<RecomendationRequestType>({
     resolver: zodResolver(RecomendationsRequestSchema),
     defaultValues: {
-      peso: 68, // Peso en kg
-      altura: 168, // Altura en cm
-      edad: 22, // Edad en años
-      genero: 0, // 0 para masculino, 1 para femenino
+      peso: 68.2,
+      altura: 168,
+      edad: 22,
+      genero: "0",
       nivel_actividad: "2",
     },
   });
@@ -57,7 +58,7 @@ export default function Recomendation() {
           Recomendación de Productos
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-8">
         <form onSubmit={handleSubmit(onForSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-end">
             {/* Peso */}
@@ -67,7 +68,16 @@ export default function Recomendation() {
                 name="peso"
                 control={control}
                 render={({ field }) => (
-                  <Input id="weight" type="number" {...field} />
+                  <Input
+                    id="weight"
+                    type="number"
+                    value={isNaN(field.value) ? "" : field.value}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      console.log({ value: value }, typeof value);
+                      field.onChange(value);
+                    }}
+                  />
                 )}
               />
               {errosForm.peso && (
@@ -82,7 +92,15 @@ export default function Recomendation() {
                 name="altura"
                 control={control}
                 render={({ field }) => (
-                  <Input id="height" type="number" {...field} />
+                  <Input
+                    id="height"
+                    type="number"
+                    value={isNaN(field.value) ? "" : field.value}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      field.onChange(value);
+                    }}
+                  />
                 )}
               />
               {errosForm.altura && (
@@ -97,7 +115,15 @@ export default function Recomendation() {
                 name="edad"
                 control={control}
                 render={({ field }) => (
-                  <Input id="age" type="number" {...field} />
+                  <Input
+                    id="age"
+                    type="number"
+                    value={isNaN(field.value) ? "" : field.value}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      field.onChange(value);
+                    }}
+                  />
                 )}
               />
               {errosForm.edad && (
@@ -107,12 +133,23 @@ export default function Recomendation() {
 
             {/* Género */}
             <div className="space-y-2">
-              <Label htmlFor="gender">Género</Label>
+              <Label>Género</Label>
               <Controller
                 name="genero"
                 control={control}
                 render={({ field }) => (
-                  <Input id="gender" type="number" {...field} />
+                  <Select
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Masculino</SelectItem>
+                      <SelectItem value="1">Femenino</SelectItem>
+                    </SelectContent>
+                  </Select>
                 )}
               />
               {errosForm.genero && (
@@ -122,7 +159,7 @@ export default function Recomendation() {
 
             {/* Nivel de Actividad Física */}
             <div className="space-y-2">
-              <Label htmlFor="activity">Nivel de Actividad Física</Label>
+              <Label>Nivel de Actividad Física</Label>
               <Controller
                 name="nivel_actividad"
                 control={control}
@@ -156,10 +193,17 @@ export default function Recomendation() {
           </div>
         </form>
 
-        <div className="space-y-2">
-          <Label className="text-lg font-semibold">
-            Tu Recomendación de productos:
-          </Label>
+        <div className="space-y-4">
+          <div className="flex gap-4 justify-between">
+            <Label className="text-lg font-semibold">
+              Tu Recomendación de productos:
+            </Label>
+            {data?.data && (
+              <Button onClick={() => toggleAllAccordions(data.data)}>
+                {openAccordions.length === 0 ? "Abrir todos" : "Cerrar todos"}
+              </Button>
+            )}
+          </div>
           {isPending ? (
             <div className="space-y-2 w-full">
               <Skeleton className="h-4 w-full" />
@@ -167,13 +211,14 @@ export default function Recomendation() {
               <Skeleton className="h-4 w-4/5" />
             </div>
           ) : data?.data ? (
-            <div className="bg-muted p-4 rounded-md">
-              <p className="text-sm">{JSON.stringify(data.data, null, 1)}</p>
-            </div>
+            <RecomendationAccordion
+              data={data.data}
+              openAccordions={openAccordions}
+              setOpenAccordions={setOpenAccordions}
+            />
           ) : (
             <p className="text-sm text-muted-foreground italic bg-muted/50 p-4 rounded-md">
-              Completa el formulario y haz clic en `{"Obtener Recomendación"}`
-              para recibir los productos adecuados para ti.
+              No se encontraron productos recomendados.
             </p>
           )}
         </div>

@@ -3,9 +3,16 @@ import { RecomendationRequestType } from "@/lib/validation";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useRecomendation() {
+  const dataInitial: RecomendationRequestType = {
+    peso: 68.2,
+    altura: 168,
+    edad: 22,
+    genero: "0",
+    nivel_actividad: "2",
+  };
   const { isError, isPending, data, mutate } = useMutation({
     mutationFn: ({
-      data,
+      data = dataInitial,
       token,
     }: {
       data: RecomendationRequestType;

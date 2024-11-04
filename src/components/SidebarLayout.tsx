@@ -4,25 +4,18 @@ import * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  Menu,
-  Home,
-  HelpCircle,
-  MenuIcon,
-  ClipboardList,
-  X,
-  LogOut,
-} from "lucide-react";
+import { Menu, Home, MenuIcon, ClipboardList, X, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/store/auth.store";
 import { isTokenExpired } from "@/lib/utils";
+import { Label } from "./ui/label";
 
 const pages = [
   { name: "Inicio", icon: Home, path: "/recomendacion" },
   { name: "Historial", icon: ClipboardList, path: "/historial" },
   //   { name: "Configuración", icon: Settings },
   //   { name: "Profile", icon: User },
-  { name: "Feedback", icon: HelpCircle, path: "/feedback" },
+  // { name: "Feedback", icon: HelpCircle, path: "/feedback" },
 ];
 
 export default function SidebarLayout({
@@ -74,7 +67,7 @@ export default function SidebarLayout({
               )}
             </Button>
           </div>
-          <nav className="px-2 flex flex-col justify-between h-full pt-1 pb-10">
+          <nav className="px-2 flex flex-col justify-between h-full  pb-10">
             <div className="space-y-2 ">
               {pages.map((page) => (
                 <Button
@@ -144,7 +137,8 @@ export default function SidebarLayout({
               </div>
             </SheetContent>
           </Sheet>
-          <div className="w-full flex justify-end">
+          <div className="w-full flex justify-between gap-4">
+            <Label className="pl-4 text-xl font-bold">RecFoodCato</Label>
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium">{email}</span>
               {/* <Avatar>
