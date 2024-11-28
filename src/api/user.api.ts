@@ -10,8 +10,8 @@ export async function registerUser(
       nombres: data.name,
       apellidos: data.lastName,
       correo: data.email,
-      contrasenia: data.password
-    }
+      contrasenia: data.password,
+    };
     const res = await fetch(urlRegisterUser, {
       cache: "no-cache",
       method: "POST",
@@ -21,6 +21,7 @@ export async function registerUser(
       body: JSON.stringify(dataMaped),
     });
     if (!res.ok) {
+      console.log({ resErrorApi: res.json, resStatus: res.status });
       throw new Error("HTTP error " + res.status);
     }
     const result: IResponseRegister = await res.json();

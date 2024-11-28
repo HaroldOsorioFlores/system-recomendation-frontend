@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,9 +25,18 @@ import { IFormErrors } from "@/lib/definitions";
 import { useLogin, useRegister } from "@/hooks/useLogin";
 import Image from "next/image";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-
+import { Spinner } from "./ui/Spinner";
+interface IStatusErrors {
+  401: string | null;
+  400: string | null;
+}
 export default function AuthInterface() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = React.useState(true);
+  const [errorStatus, setErrorStatus] = React.useState<IStatusErrors>({
+    401: null,
+    400: null,
+  });
+  console.log({ errorStatus });
 
   const loginHook = useLogin();
   const registerHook = useRegister();
@@ -59,13 +68,50 @@ export default function AuthInterface() {
     console.log({ data });
     if (isLogin) {
       loginHook.mutate(data as LoginUserType);
+      console.log({ loginHookError: loginHook.error });
     } else {
       registerHook.mutate(data as RegisterUserType);
+      console.log({ loginHookError: registerHook.error });
+    }
+  };
+
+  React.useEffect(() => {
+    if (loginHook.isError) {
+      setErrorStatus((prev) => ({
+        ...prev,
+        401: loginHook.error?.message ?? null,
+      }));
+      console.log({
+        LoginHookErrorEffect: loginHook.error?.message.includes("401"),
+      });
+    } else {
+      setErrorStatus((prev) => ({ ...prev, 401: null }));
     }
 
-    reset();
-    router.push("/recomendacion");
-  };
+    if (registerHook.isError) {
+      setErrorStatus((prev) => ({
+        ...prev,
+        400: registerHook.error?.message ?? null,
+      }));
+      console.log({
+        RegisterHookErrorEffect: registerHook.error?.message.includes("400"),
+      });
+    } else {
+      setErrorStatus((prev) => ({ ...prev, 400: null }));
+    }
+  }, [
+    loginHook.isError,
+    registerHook.isError,
+    loginHook.error,
+    registerHook.error,
+  ]);
+
+  React.useEffect(() => {
+    if (loginHook.isSuccess || registerHook.isSuccess) {
+      reset();
+      router.push("/recomendacion");
+    }
+  }, [loginHook.isSuccess, registerHook.isSuccess, reset, router]);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
@@ -172,9 +218,26 @@ export default function AuthInterface() {
                 )}
               </div>
             )}
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loginHook.isPending || registerHook.isPending}
+            >
               {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
+              {loginHook.isPending || registerHook.isPending ? (
+                <Spinner size="sm" className="mr-2" />
+              ) : null}
             </Button>
+            {errorStatus[401]?.includes("401") === true && isLogin && (
+              <p className="text-red-500 text-sm text-center">
+                Credenciales incorrectas
+              </p>
+            )}
+            {errorStatus[400]?.includes("400") === true && !isLogin && (
+              <p className="text-red-500 text-sm text-center">
+                El correo ya se encuentra registrado
+              </p>
+            )}
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">

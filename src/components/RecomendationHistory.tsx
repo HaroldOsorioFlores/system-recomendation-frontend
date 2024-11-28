@@ -52,7 +52,13 @@ export default function RecomendationHistory() {
         <div className="flex justify-between">
           <CardTitle>Historial</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Mostrando {data?.size ?? 0} de {data?.total ?? 0} consultas
+            {data?.total !== undefined && data?.total > 10 ? (
+              <span>
+                Mostrando {data?.size ?? 0} de {data?.total ?? 0} consultas
+              </span>
+            ) : (
+              <span>Mostrando {data?.total ?? 0} consultas</span>
+            )}
           </p>
         </div>
         {/* <CardDescription>Ver y buscar en tus consultas pasadas</CardDescription> */}
