@@ -42,48 +42,48 @@ export function RecomendationDialog({
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px]">
-        <DialogHeader>
-          <DialogTitle>Recomendación de productos #{data.id}</DialogTitle>
-          <DialogDescription>
-            Fecha de recomendación: {formaterDate(data.f_recomendacion)}
-          </DialogDescription>
-          <DialogDescription>
-            Tienes un IMC de <span className="font-bold">{data.imc}</span> en
-            una categoria de
-            <span className="font-bold"> {categoryIMC(data.imc)}</span>
-          </DialogDescription>
+        <ScrollArea className="rounded-md max-h-96 sm:max-h-[500px]">
+          <DialogHeader>
+            <DialogTitle>Recomendación de productos #{data.id}</DialogTitle>
+            <DialogDescription>
+              Fecha de recomendación: {formaterDate(data.f_recomendacion)}
+            </DialogDescription>
+            <DialogDescription>
+              Tienes un IMC de <span className="font-bold">{data.imc}</span> en
+              una categoria de
+              <span className="font-bold"> {categoryIMC(data.imc)}</span>
+            </DialogDescription>
 
-          <DialogDescription>
-            ¡Aquí tienes algunas recomendaciones de productos que hiciste con
-            anterioridad!
-          </DialogDescription>
-        </DialogHeader>
-        <DialogDescription className="font-bold">Datos: </DialogDescription>
-        <div className=" grid grid-cols-2 gap-2">
-          <DialogDescription>Edad: {data.edad}</DialogDescription>
-          <DialogDescription>
-            Genero: {data.genero == 0 ? "Masculino" : "Femenino"}
-          </DialogDescription>
-          <DialogDescription>Peso: {data.peso}</DialogDescription>
-          <DialogDescription>Altura: {data.talla}</DialogDescription>
-          <DialogDescription>
-            Actividad Fisica: {categoryActividad(data.act_fisica)}
-          </DialogDescription>
-        </div>
-        <ScrollArea className="rounded-md max-h-96">
+            <DialogDescription>
+              ¡Aquí tienes algunas recomendaciones de productos que hiciste con
+              anterioridad!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogDescription className="font-bold">Datos: </DialogDescription>
+          <div className=" grid grid-cols-2 gap-2">
+            <DialogDescription>Edad: {data.edad}</DialogDescription>
+            <DialogDescription>
+              Genero: {data.genero == 0 ? "Masculino" : "Femenino"}
+            </DialogDescription>
+            <DialogDescription>Peso: {data.peso}</DialogDescription>
+            <DialogDescription>Altura: {data.talla}</DialogDescription>
+            <DialogDescription>
+              Actividad Fisica: {categoryActividad(data.act_fisica)}
+            </DialogDescription>
+          </div>
           <RecomendationAccordion
             data={adapterData}
             openAccordions={openAccordions}
             setOpenAccordions={setOpenAccordions}
           />
+          <DialogFooter>
+            {data?.productos && (
+              <Button onClick={() => toggleAllAccordions(adapterData)}>
+                {openAccordions.length === 0 ? "Abrir todos" : "Cerrar todos"}
+              </Button>
+            )}
+          </DialogFooter>
         </ScrollArea>
-        <DialogFooter>
-          {data?.productos && (
-            <Button onClick={() => toggleAllAccordions(adapterData)}>
-              {openAccordions.length === 0 ? "Abrir todos" : "Cerrar todos"}
-            </Button>
-          )}
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
